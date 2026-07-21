@@ -53,7 +53,7 @@ export default function ClosingSection({ auth }) {
           </>
         )}
       </button>
-      <p className="admin-wrong-account">Developed by <a href="https://www.linkedin.com/in/mayarakok">Mayar Akok</a>.</p>
+      <p className="admin-wrong-account">Developed by <a className="admin-wrong-account" href="https://www.linkedin.com/in/mayarakok">Mayar Akok</a>.</p>
       {wrongAccount && (
         <p className="admin-wrong-account">that Google account isn't set up to edit this site.</p>
       )}
