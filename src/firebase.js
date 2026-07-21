@@ -25,4 +25,4 @@ export const googleProvider = new GoogleAuthProvider();
 
 // The one email allowed to sign in and edit the message.
 // Swap this for your client's real Google account email.
-export const ADMIN_EMAIL = 'akokmayar607@gmail.com';
+export const ADMIN_EMAIL = 'limokamar7@gmail.com';
