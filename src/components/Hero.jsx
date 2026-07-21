@@ -1,5 +1,5 @@
 import React from "react";
-import { Mail, ChevronDown } from "lucide-react";
+import { Mail, ChevronDown, Plane } from "lucide-react";
 import { CONFIG } from "../config.js";
 import { useTilt } from "../hooks/useTilt.js";
 
@@ -30,6 +30,17 @@ export default function Hero({ opened, onOpen }) {
 
       <div className="scroll-cue">
         <ChevronDown size={26} />
+      </div>
+
+      <div className="hero-flightpath" aria-hidden="true">
+        <span className="flight-ellipse ellipse-outer" />
+        <span className="flight-ellipse ellipse-inner" />
+        <span className="flight-dot dot-a" />
+        <span className="flight-dot dot-b" />
+        <span className="flight-cloud cloud-a" />
+        <span className="flight-cloud cloud-b" />
+        <span className="hero-plane plane-main"><Plane size={20} /></span>
+        <span className="hero-plane plane-trail"><Plane size={12} /></span>
       </div>
     </section>
   );

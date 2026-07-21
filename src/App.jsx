@@ -11,11 +11,14 @@ export default function App() {
   const letterRef = useRef(null);
   const auth = useAdminAuth();
 
-  const handleOpen = useCallback(() => {
+  // Hero seal: just scroll down to the letter, don't open it yet
+  const handleScrollToLetter = useCallback(() => {
+    letterRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
+  // Letter card tap: actually reveal the letter
+  const handleOpenLetter = useCallback(() => {
     setOpened(true);
-    setTimeout(() => {
-      letterRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 350);
   }, []);
 
   return (
@@ -24,8 +27,8 @@ export default function App() {
       <div className="bg-orb two" aria-hidden="true" />
       <FloatingHearts count={16} />
 
-      <Hero opened={opened} onOpen={handleOpen} />
-      <LetterSection ref={letterRef} opened={opened} isAdmin={auth.isAdmin} />
+      <Hero opened={opened} onOpen={handleScrollToLetter} />
+      <LetterSection ref={letterRef} opened={opened} onOpen={handleOpenLetter} isAdmin={auth.isAdmin} />
       <GallerySection />
       <ClosingSection auth={auth} />
     </div>

@@ -1,21 +1,28 @@
 import React, { forwardRef, useCallback, useEffect, useState } from "react";
-import { Pencil, Check } from "lucide-react";
+import { Pencil, Check, Heart, Sparkles, Plane } from "lucide-react";
 import { doc, onSnapshot, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase.js";
 import { CONFIG } from "../config.js";
 import { useReveal } from "../hooks/useReveal.js";
 import { useTilt } from "../hooks/useTilt.js";
 
-// const PLACEHOLDER = `My  ${CONFIG.partnerName},
+const PLACEHOLDER = `My  ${CONFIG.partnerName},
 
-// Write something
+Write something
 
-// Forever yours,
-// ${CONFIG.yourName}`;
+Forever yours,
+${CONFIG.yourName}`;
 
-const LetterSection = forwardRef(function LetterSection({ opened, isAdmin }, ref) {
+const LetterSection = forwardRef(function LetterSection({ opened, onOpen, isAdmin }, ref) {
   const [headRef, headVisible] = useReveal();
-  const tilt = useTilt({ max: 5, scale: 1.015, perspective: 1400 });
+const [cardRevealRef, cardVisible] = useReveal();
+const tilt = useTilt({ max: 5, scale: 1.015, perspective: 1400 });
+
+// merge the two refs onto the same DOM node
+const setCardRef = useCallback((node) => {
+  cardRevealRef.current = node;
+  tilt.ref.current = node;
+}, [cardRevealRef, tilt.ref]);
 
   const [letter, setLetter] = useState("");
   const [loading, setLoading] = useState(true);
@@ -67,24 +74,35 @@ const LetterSection = forwardRef(function LetterSection({ opened, isAdmin }, ref
     .map((p) => p.trim())
     .filter(Boolean);
 
+  const handleCardClick = useCallback(() => {
+  console.log("card clicked", { opened, editing, hasOnOpen: !!onOpen });
+  if (!opened && !editing) {
+    onOpen?.();
+  }
+}, [opened, editing, onOpen]);
+
   return (
     <section className="letter-section section" ref={ref}>
       <div ref={headRef} className={`letter-head ${headVisible ? "visible" : ""}`}>
         <h2>A little something I wrote</h2>
-        <p></p>
+        <p>open when you have a quiet minute</p>
       </div>
 
       <div
-        ref={tilt.ref}
-        onMouseMove={editing ? undefined : tilt.onMouseMove}
-        onMouseLeave={editing ? undefined : tilt.onMouseLeave}
-        className={`letter-card ${opened ? "opened" : ""} ${editing ? "editing" : ""}`}
-      >
-        {isAdmin && (
+  ref={setCardRef}
+  onMouseMove={editing ? undefined : tilt.onMouseMove}
+  onMouseLeave={editing ? undefined : tilt.onMouseLeave}
+  onClick={handleCardClick}
+  className={`letter-card ${cardVisible ? "revealed" : ""} ${opened ? "opened" : ""} ${editing ? "editing" : ""}`}
+>
+        {isAdmin && opened && (
           <button
             type="button"
             className="letter-edit-btn"
-            onClick={editing ? save : startEdit}
+            onClick={(e) => {
+              e.stopPropagation();
+              editing ? save() : startEdit();
+            }}
             disabled={saving}
             aria-label={editing ? "Save letter" : "Edit letter"}
           >
@@ -93,11 +111,36 @@ const LetterSection = forwardRef(function LetterSection({ opened, isAdmin }, ref
           </button>
         )}
 
-        {editing ? (
+        { !opened ? (
+          <div className="letter-closed-face">
+  <div className="letter-seal-orbit">
+    <span className="compass-ring ring-outer" />
+    <span className="compass-ring ring-inner" />
+    <span className="compass-tick tick-n">N</span>
+    <span className="compass-tick tick-e">E</span>
+    <span className="compass-tick tick-s">S</span>
+    <span className="compass-tick tick-w">W</span>
+
+    <span className="orbit-plane"><Plane size={14} /></span>
+    <span className="orbit-dot orbit-dot-a"><Sparkles size={12} /></span>
+    <span className="orbit-dot orbit-dot-b"><Heart size={10} fill="currentColor" strokeWidth={0} /></span>
+    <span className="orbit-dot orbit-dot-c"><Sparkles size={9} /></span>
+    <span className="orbit-dot orbit-dot-d"><Heart size={8} fill="currentColor" strokeWidth={0} /></span>
+
+    <span className="letter-seal-icon">
+      <Heart size={26} fill="currentColor" strokeWidth={0} />
+    </span>
+  </div>
+  <h3>A letter for you</h3>
+  <p>sealed with a little too much love</p>
+  <span className="letter-closed-hint">flight path set — tap to open</span>
+</div>
+        ) : editing ? (
           <textarea
             className="letter-textarea"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
             placeholder="Write your message here. Leave a blank line between paragraphs."
             autoFocus
           />

@@ -175,9 +175,141 @@ html, body, #root {
   opacity: 0.5;
   animation: bounce 2s ease-in-out infinite;
 }
+/* ---------- HERO FLIGHT PATH ---------- */
+.hero-flightpath {
+  position: relative;
+  width: 260px;
+  height: 120px;
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 900px;
+}
+
+.flight-ellipse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotateX(62deg);
+  pointer-events: none;
+}
+.ellipse-outer {
+  width: 240px;
+  height: 240px;
+  border: 1px dashed rgba(205, 164, 78, 0.35);
+  animation: ellipseSpin 24s linear infinite;
+}
+.ellipse-inner {
+  width: 170px;
+  height: 170px;
+  border: 1px dotted rgba(200, 70, 93, 0.3);
+  animation: ellipseSpin 17s linear infinite reverse;
+}
 @keyframes bounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(8px); }
+}
+@keyframes ellipseSpin {
+  from { transform: translate(-50%, -50%) rotateX(62deg) rotateZ(0deg); }
+  to   { transform: translate(-50%, -50%) rotateX(62deg) rotateZ(360deg); }
+}
+
+.flight-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--gold-soft);
+  box-shadow: 0 0 6px 1px rgba(230, 207, 154, 0.6);
+  transform-origin: center;
+}
+.dot-a {
+  animation: dotOrbitA 10s linear infinite;
+}
+.dot-b {
+  background: var(--rose-soft);
+  box-shadow: 0 0 6px 1px rgba(224, 130, 151, 0.55);
+  animation: dotOrbitB 13s linear infinite reverse;
+}
+@keyframes dotOrbitA {
+  from { transform: translate(-50%, -50%) rotate(0deg) translateX(120px) rotate(0deg) scaleY(0.42); }
+  to   { transform: translate(-50%, -50%) rotate(360deg) translateX(120px) rotate(-360deg) scaleY(0.42); }
+}
+@keyframes dotOrbitB {
+  from { transform: translate(-50%, -50%) rotate(0deg) translateX(85px) rotate(0deg) scaleY(0.42); }
+  to   { transform: translate(-50%, -50%) rotate(360deg) translateX(85px) rotate(-360deg) scaleY(0.42); }
+}
+
+.flight-cloud {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(251, 243, 234, 0.06);
+  filter: blur(1px);
+}
+.cloud-a {
+  width: 34px;
+  height: 12px;
+  top: 20%;
+  left: 8%;
+  animation: cloudDrift 9s ease-in-out infinite;
+}
+.cloud-b {
+  width: 26px;
+  height: 9px;
+  bottom: 14%;
+  right: 10%;
+  animation: cloudDrift 11s ease-in-out infinite reverse;
+}
+@keyframes cloudDrift {
+  0%, 100% { transform: translateX(0); opacity: 0.5; }
+  50%      { transform: translateX(14px); opacity: 0.85; }
+}
+
+.hero-plane {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: var(--gold-soft);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
+}
+.plane-main {
+  width: 20px;
+  height: 20px;
+  margin: -10px;
+  offset-path: ellipse(120px 50px at 50% 50%);
+  offset-rotate: auto;
+  animation: planeFly 11s linear infinite;
+}
+.plane-main svg { transform: rotate(45deg); }
+
+.plane-trail {
+  width: 12px;
+  height: 12px;
+  margin: -6px;
+  color: var(--rose-soft);
+  opacity: 0.6;
+  offset-path: ellipse(120px 50px at 50% 50%);
+  offset-rotate: auto;
+  offset-distance: 8%;
+  animation: planeFly 11s linear infinite;
+}
+.plane-trail svg { transform: rotate(45deg); }
+
+@keyframes planeFly {
+  from { offset-distance: 0%; }
+  to   { offset-distance: 100%; }
+}
+
+@media (max-width: 480px) {
+  .hero-flightpath { width: 200px; height: 100px; }
+  .ellipse-outer { width: 190px; height: 190px; }
+  .ellipse-inner { width: 130px; height: 130px; }
+  .plane-main, .plane-trail { offset-path: ellipse(95px 40px at 50% 50%); }
+  .dot-a { animation-name: dotOrbitA; }
 }
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(22px); }
@@ -220,9 +352,9 @@ html, body, #root {
   transition: transform 0.9s cubic-bezier(0.22,1,0.36,1), opacity 0.9s ease, box-shadow 0.35s ease;
   will-change: transform;
 }
-.letter-card.opened {
-  transform: perspective(1400px) rotateX(0deg) translateY(0);
+.letter-card.revealed {
   opacity: 1;
+  transform: perspective(1400px) rotateX(0deg) translateY(0);
 }
 .letter-card:hover {
   box-shadow: 0 40px 90px rgba(0,0,0,0.55), 0 0 0 1px rgba(205,164,78,0.3);
@@ -358,6 +490,192 @@ html, body, #root {
 }
 
 /* ---------- CLOSING ---------- */
+.letter-closed-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  padding: 20px 0;
+}
+.letter-seal-orbit {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* radar / compass rings */
+.compass-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.ring-outer {
+  width: 118px;
+  height: 118px;
+  border: 1px dashed rgba(205,164,78,0.32);
+  animation: ringSpin 22s linear infinite;
+}
+.ring-inner {
+  width: 88px;
+  height: 88px;
+  border: 1px dotted rgba(200,70,93,0.3);
+  animation: ringSpin 16s linear infinite reverse;
+}
+@keyframes ringSpin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.compass-tick {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  color: var(--gold-soft);
+  opacity: 0.45;
+}
+.tick-n { transform: translate(-50%, -68px); }
+.tick-s { transform: translate(-50%, 56px); }
+.tick-e { transform: translate(56px, -50%); }
+.tick-w { transform: translate(-68px, -50%); }
+
+.letter-seal-icon {
+  position: relative;
+  z-index: 2;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 35% 30%, var(--rose-soft), var(--rose) 55%, #7a1f33 100%);
+  color: var(--cream);
+  box-shadow: 0 10px 26px rgba(200, 70, 93, 0.45), inset 0 2px 6px rgba(255, 255, 255, 0.3);
+  animation: sealFloat 3.2s ease-in-out infinite, sealGlow 3.2s ease-in-out infinite;
+}
+
+.letter-seal-icon {
+  position: relative;
+  z-index: 2;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 35% 30%, var(--rose-soft), var(--rose) 55%, #7a1f33 100%);
+  color: var(--cream);
+  box-shadow: 0 10px 26px rgba(200, 70, 93, 0.45), inset 0 2px 6px rgba(255, 255, 255, 0.3);
+  animation: sealFloat 3.2s ease-in-out infinite, sealGlow 3.2s ease-in-out infinite;
+}
+/* orbiting hearts/sparkles — the "galaxy" */
+.orbit-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-soft);
+  opacity: 0.85;
+  transform-origin: center;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.orbit-dot-a { animation-name: orbitSpin; animation-duration: 7s; }
+.orbit-dot-b { animation-name: orbitSpin; animation-duration: 9.5s; animation-direction: reverse; color: var(--rose-soft); }
+.orbit-dot-c { animation-name: orbitSpin; animation-duration: 12s; }
+.orbit-dot-d { animation-name: orbitSpinWide; animation-duration: 15s; animation-direction: reverse; color: var(--rose-soft); opacity: 0.7; }
+
+@keyframes orbitSpin {
+  from { transform: rotate(0deg) translateX(48px) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(48px) rotate(-360deg); }
+}
+@keyframes orbitSpinWide {
+  from { transform: rotate(0deg) translateX(60px) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+}
+
+/* the little paper airplane on approach */
+.orbit-plane {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-soft);
+  offset-path: circle(52px at 50% 50%);
+  offset-rotate: auto;
+  animation: flyOrbit 9s linear infinite;
+}
+.orbit-plane svg { transform: rotate(45deg); }
+@keyframes flyOrbit {
+  from { offset-distance: 0%; }
+  to   { offset-distance: 100%; }
+}
+
+@keyframes sealFloat {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50%      { transform: translateY(-9px) rotate(4deg); }
+}
+@keyframes sealGlow {
+  0%, 100% { box-shadow: 0 10px 26px rgba(200,70,93,0.45), inset 0 2px 6px rgba(255,255,255,0.3), 0 0 0 0 rgba(205,164,78,0.35); }
+  50%      { box-shadow: 0 10px 30px rgba(200,70,93,0.55), inset 0 2px 6px rgba(255,255,255,0.35), 0 0 0 14px rgba(205,164,78,0); }
+}
+.letter-closed-face h3 {
+  font-family: 'Dancing Script', cursive;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: var(--ink);
+  margin: 4px 0 0;
+}
+.letter-closed-face p {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: #7a6350;
+  margin: 0;
+}
+.letter-closed-hint {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rose);
+  opacity: 0.75;
+}
+.letter-card:not(.opened) {
+  overflow: hidden;
+}
+.letter-card:not(.opened)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,0.4) 50%, transparent 65%);
+  transform: translateX(-130%);
+  animation: shimmerSweep 5.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes shimmerSweep {
+  0%, 55%  { transform: translateX(-130%); }
+  100%     { transform: translateX(130%); }
+}
 .closing-section {
   padding: 60px 24px 120px;
   text-align: center;
@@ -440,4 +758,14 @@ html, body, #root {
 button:focus-visible, a:focus-visible {
   outline: 2px solid var(--gold-soft);
   outline-offset: 3px;
+}
+
+.letter-seal-orbit,
+.compass-ring,
+.compass-tick,
+.orbit-dot,
+.orbit-plane,
+.letter-seal-icon,
+.letter-closed-face {
+  pointer-events: none;
 }
